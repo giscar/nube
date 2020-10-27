@@ -1,4 +1,3 @@
-set scan  off
 CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_MAKE_CONTRATOS"
 
   IS
@@ -23,11 +22,12 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_MAKE_CONTRATOS"
   gpk_directorio_resumen_cont     varchar2(50):= 'mon\docs\contratos';
   gpk_directorio_resolucion       varchar2(50):= 'mon\docs\contratos';
   gpk_directorio_nulidad          varchar2(50):= 'mon\docs\contratos';  
-  
-  
+
+
   --consultoria nube migracion
-  url_azure_app    varchar2(250):= 'https://zonasegura2.seace.gob.pe/documentos/';
-  
+  url_azure_app    varchar2(50):= 'https://zonasegura2.seace.gob.pe/documentos/';
+  url_azure_app1    varchar2(50):= 'https://zonasegura2.seace.gob.pe/';
+
 ------------------------- Constantes--------------------------
 
   type ref_cursor is ref cursor;
@@ -86,7 +86,7 @@ procedure uspIrOperacionDoView(
 /******************************************************************************/
 
 
- 
+
 /*
   procedure uspNewContratosItemsDoEdit(
     ag_fecSusc   varchar2 default null,
@@ -104,7 +104,7 @@ procedure uspIrOperacionDoView(
 / Gerardo Millones                          Version Inicial
 /******************************************************************************/
   procedure uspListTransferenciasDoView(ag_ncod_contrato varchar2);
-  
+
   PROCEDURE usplistcontratosdoview_v3 (
     ag_n_convoca              VARCHAR2 DEFAULT NULL,
     an_codconsucode           VARCHAR2 DEFAULT NULL,
@@ -243,7 +243,7 @@ procedure uspIrOperacionDoView(
       ag_penalidad_fecha      OUT      VARCHAR2,
       ag_penalidad_causal     OUT      VARCHAR2
    );
- 
+
  PROCEDURE usplistsearchitems (
       ag_cod_contrato     NUMBER default null,
       ag_n_convoca        NUMBER default null,
@@ -340,7 +340,7 @@ procedure uspIrOperacionDoView(
    session__AG_N_CONVOCA            VARCHAR2 DEFAULT NULL,
    ag_id_operacion                  VARCHAR2
   );
-  
+
   PROCEDURE uspmancontratosdoedit (
       session__userid            VARCHAR2 DEFAULT NULL,
       session__N_CONVOCA      VARCHAR2 DEFAULT NULL,
@@ -367,7 +367,7 @@ procedure uspIrOperacionDoView(
       session__eue_codigo        VARCHAR2,
       ag_trama_calendario        VARCHAR2 
    );
-   
+
    PROCEDURE uspprocesarupdatecontrato (
       session__cod_contrato           VARCHAR2,
       session__n_convoca              VARCHAR2,
@@ -421,7 +421,7 @@ procedure uspIrOperacionDoView(
       ag_trama_calendario             varchar2 ,
       ag_trama_items_codpresup        VARCHAR2 
    );
-   
+
  PROCEDURE uspprocesarinsertcontrato (
     session__AG_N_CONVOCA           VARCHAR2 DEFAULT NULL,
     session__USERID                 VARCHAR2 DEFAULT NULL,
@@ -471,7 +471,7 @@ procedure uspIrOperacionDoView(
     ag_trama_calendario             varchar2,
     ag_trama_items_codpresup        varchar2
  );
- 
+
   PROCEDURE uspverconvocatoriadoview (
       ag_n_convoca            IN       VARCHAR2,
       ag_codconsucode         OUT      VARCHAR2,
@@ -559,7 +559,7 @@ PROCEDURE uspBuscarCodPresupuestal(
           ag_proc_item                varchar2, 
           ag_tipo_operacion           varchar2,
           ag_codconsucode             VARCHAR2 );
-    
+
 PROCEDURE usp_registra_codpresup(
           ag_trama_items_codpresup varchar2, 
           ag_ncodcontrato          number, 
@@ -572,7 +572,7 @@ FUNCTION f_retorna_combo(
   ag_codigo       varchar2, 
   ag_libre        varchar2 default null,
   ag_atributos    varchar2 default null) RETURN varchar2;
-  
+
   procedure usp_documento(
     session__filesingedhttp   VARCHAR2 DEFAULT NULL,
     vi_n_convoca number );
@@ -779,7 +779,7 @@ END;
                               when 5 then 'Item paquete'
                               else '-'
                          end  item_paquete
-                         
+
                     FROM reg_procesos.item_convoca itc
                         left join t_tipo_sist_cont  tsc on itc.cod_sist_adquisicion = tsc.sc_codigo
                         left join t_tipo_modcont tmc on itc.cod_modalidad_alcance = tmc.codmodcnt,
@@ -801,7 +801,7 @@ END;
                                            and ice2.proc_item = icei.proc_item
                                          )
                            ) ice
-                        
+
                    where itc.n_convoca = p_max_n_convoca
                      AND (   UPPER (itc.descripcion) LIKE UPPER ('%' || p_descripcion || '%')
                           OR UPPER (itc.proc_item) LIKE UPPER ('%' || p_descripcion || '%')
@@ -888,7 +888,7 @@ END;
                                sease.dep_ubigeo dep,
                                sease.prov_ubigeo pro,
                                sease.dist_ubigeo dis,
-                            
+
                                (
                                  select icei.* from  reg_procesos.item_convoca_estado icei
                                  where  icei.n_convoca_src = reg_procesos.f_get_min_n_convoca(p_n_convoca )
@@ -1312,7 +1312,7 @@ IF lv_totalregistros > 0 THEN
 
             --if xrow.cant_max > 0 AND xrow.monto_max > 0 THEN
             if (xrow.cant_max > 0 or (xrow.tipoitem=5 and xrow.codobjeto=3)) and xrow.monto_max > 0 then -- Si es paquete-obras no validar la cantidad
-            
+
                lv_clase := '';
                usp_print('<td align="right"  class="recuadro">'||
                          makea2('pitem='|| xrow.proc_item||'
@@ -1330,7 +1330,7 @@ IF lv_totalregistros > 0 THEN
                                 ,unm_desc='''||xrow.unm_desc||'''
                                 ,unm_codigo='|| xrow.unm_codigo,'retornaItemsCO_v3',xrow.proc_item)||
                          '</td>');
-                         
+
               usp_print('<td align="center" class="recuadro">'|| xrow.item_paquete||'</td>');         
 
               usp_print('<td align="right"  class="recuadro"><font size=1>'||
@@ -1371,7 +1371,7 @@ IF lv_totalregistros > 0 THEN
             || xrow.dep_codigo|| '] '|| xrow.dep_desc
             || ' / ['|| xrow.pro_codigo || '] '|| xrow.pro_desc|| '/ ['|| xrow.dis_codigo
                        || '] '|| xrow.dis_desc || '</td>');
-            
+
             usp_print('<td align="center" class="recuadro">'|| xrow.sc_descripcion|| '</td>');
             usp_print('<td align="center" class="recuadro">'|| xrow.desmodcnt|| '</td>');
             usp_print ('</tr>');
@@ -1466,7 +1466,7 @@ IF lv_totalregistros = 0 THEN
               <TD class="recuadro" align="right">'|| TO_CHAR (xrow.cantidad,reg_procesos.pku_ss_constantes.gv_formato_dinero) || '</TD>
               <TD class="recuadro" align="right">'|| TO_CHAR (xrow.monto, reg_procesos.pku_ss_constantes.gv_formato_dinero)|| '</TD>
               <TD class="recuadro" align="center">'|| xrow.unm_desc || '</TD>
-          
+
               <TD class="recuadro">');
 
            usp_print
@@ -1491,7 +1491,7 @@ IF lv_totalregistros = 0 THEN
                                 ['|| xrow.dep_codigo || '] ' || xrow.dep_desc || '/
                                 ['|| xrow.pro_codigo || '] ' || xrow.pro_desc || '/
                                 ['|| xrow.dis_codigo || '] ' || xrow.dis_desc || '</TD>
-                                
+
                                      <td align="center" class="recuadro">'|| xrow.sc_descripcion|| '</td>
            <td align="center" class="recuadro">'|| xrow.desmodcnt|| '</td>
                                 ');
@@ -2087,8 +2087,8 @@ end loop;
     usp_print ('<input type="hidden" name="ag_cm_oper_compra"      value="">');
     usp_print ('<input type="hidden" name="contrato"               value="'||contrato||'">');
     usp_print ('<input type="hidden" name="convoca"                value="'||convoca||'">');
-    
-    
+
+
  usp_print('<input type="hidden" name="av_id_expede"           value="'||av_id_expede||'"/>');
  usp_print('<input type="hidden" name="av_id_proc"             value="'||av_id_proc||'"/>');
  usp_print('<input type="hidden" name="av_id_con_pub"          value="'||av_id_con_pub||'"/>');
@@ -2124,7 +2124,7 @@ end loop;
 
             usp_print('<td align="right" valign=top width="50%">
                        <input type="button" name="g" value="Volver" OnClick="volver()"/>&nbsp;&nbsp;');
-           
+
            -- (3/3) 12.09.2020, obtiene el indicador que verifica que las acciones esten habilitadas
            if ln_modulo = 1 then 
               if (n_cvalidauser = 0) then --No aparece boton si es Arbitro - ddrodriguez
@@ -2187,20 +2187,20 @@ usp_print('<div style="background-color:#F6FF8A;">Si requiere registrar un nuevo
 
           select   count(*) INTO valida_arbitro from reg_procesos.contrato_arbitraje where ruc_presidente = trim(session__userid)
           and n_cod_contrato = ln_n_cod_contrato_pad and ind_ultimo = 1;
- 
+
    -- Inicio Validacion SEACE3: Mostrar contratos que corresponden solo al Arbitro  n_cvalidauser=1 y valida_arbitro>1 (cantidad de contratos) - ddrodriguez
         IF ((n_cvalidauser = 0) or (valida_arbitro > 0 and n_cvalidauser > 0)) THEN 
-          
+
           -- Jcerda req MEF 19/10/2015
           select (case when av_id_expede is not null and trunc(ld_f_registro) >= ld_fec_reqmef then lpad(av_id_expede,8,'0') else lpad(ln_n_convoca_pad,8,'0') end) 
             into lc_idprocsel
             from dual;
-             
+
             usp_print ('
         <tr '||lv_estilo_fila||' >
             <td colspan="7">
                 <b>'||makea('ag_cod_contrato='||ln_n_cod_contrato_pad||'&ag_n_convoca='||ln_n_convoca_pad||'&ag_indConsola='||ln_contcontratos||'&ag_proc_tipo='|| ag_proc_tipo||'&ag_proc_desc='|| ag_proc_desc||'&ag_proc_sigla='|| ag_proc_sigla||'&ag_currenpage='|| ag_currenpage||'&ag_codconsucode='|| an_codconsucode||'&ag_anhoentidad='|| ln_anhoentidad||'&scriptdo=doEditContrato&av_id_expede='||av_id_expede||'&av_id_proc='||av_id_proc||'&av_id_con_pub='||av_id_con_pub,ln_codconsucode_cursor||'-'||/*ln_n_convoca_pad||*/lc_idprocsel||'-'||ln_n_cod_contrato_pad)||'&nbsp;&nbsp;&nbsp;<b>'||lv_ruc_contratista||' - '||lv_nom_contratista ||'</b>&nbsp;&nbsp;&nbsp;');-- Jcerda req MEF 19/10/2015
-             
+
         --cambios arbitros nueva ley
         IF n_cvalidauser = 0 THEN
           if ln_indPubContratos = 1 then
@@ -2289,7 +2289,7 @@ usp_print('<div style="background-color:#F6FF8A;">Si requiere registrar un nuevo
                nvl(replace('bootstrap/'||tipo_archivo.icon_tipo_file, 'jpg', 'png'),99) icon_tipo_file,
                (reg_procesos.convocatoria_doc.tamano_bytes) tamano,
                reg_procesos.convocatoria_doc.fec_upload fecha_creacion  
-                
+
                 INTO lv_doc_url, lv_icon_tipo_file, lv_tamano, lv_fecha_creacion
                 FROM
                     reg_procesos.tipo_documento LEFT OUTER
@@ -2305,9 +2305,11 @@ usp_print('<div style="background-color:#F6FF8A;">Si requiere registrar un nuevo
                 IF (lv_doc_url IS NOT NULL) THEN
                     --     usp_print ('<a target=_blank href="DownloadFileServlet?fileName='||lv_doc_url||'"><img src="'||lv_icon_tipo_file||'" border="0" width="30" height="30"/></a>');        
               --  usp_print ('<a target="_blank" href="DownloadFileServlet?fileName='||lv_doc_url||'">');
-                usp_print ('<a target="_blank" href="'||url_azure_app||lv_doc_url||'">');
-                
-                
+                if (INSTR(lv_doc_url, 'particion1') > 0) then
+                    usp_print ('<a target="_blank" href="'||url_azure_app1||lv_doc_url||'">');
+                else
+                    usp_print ('<a target="_blank" href="'||url_azure_app||lv_doc_url||'">');
+                end if;
                 usp_print ('<img src="'||lv_icon_tipo_file||'" width="30" height="30" border="0">
                 <br>'||to_char(lv_fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(lv_tamano,'999,999,999')||' Kb.<br></b><br>');
@@ -2321,16 +2323,20 @@ usp_print('<div style="background-color:#F6FF8A;">Si requiere registrar un nuevo
             <td align="center" valign="top">');
 
              for xx in cdocs2(ln_nconvoca,ln_n_cod_contrato)loop
-                usp_print ('
-                <a target="_blank" href="'||url_azure_app||xx.archivo||'">
-                <img src="'||xx.icon_tipo_file||'" width="30" height="30" border="0">
+                if (INSTR(lv_doc_url, 'particion1') > 0) then
+                    usp_print ('<a target="_blank" href="'||url_azure_app1||xx.archivo||'">');
+                else
+                    usp_print ('<a target="_blank" href="'||url_azure_app||xx.archivo||'">');
+                end if;
+                
+                usp_print ('<img src="'||xx.icon_tipo_file||'" width="30" height="30" border="0">
                 <br>'||to_char(xx.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(xx.tamano,'999,999,999')||' Kb.<br></b><br>');
             end loop;
 
             usp_print('</td>
         </tr>');
-        
+
              END IF ; -- Finaliza Validacion Arbitro SEACE3, mostrar contratos que corresponden - ddrodriguez
 
         END LOOP;
@@ -3199,7 +3205,7 @@ function valruc(valor)
 / -------------------- ----------------  ---------------------
 / Gerardo Millones     23-10-2007 11:59  Version Inicial
 /******************************************************************************/
-   
+
 PROCEDURE sp_javascript_contratos_busca
    IS
    BEGIN
@@ -3208,9 +3214,9 @@ PROCEDURE sp_javascript_contratos_busca
          ('
     function retornaItemsCO(pitem,pdesc,pfbcons,pubigeo,pmonto,pcantidad,unm_desc,unm_codigo)
     {
-      
+
         var wo = window.opener
-        
+
       window.opener.document.all(''ag_proc_item'').value   = pitem;
       window.opener.document.all(''ag_descripcion'').value = pdesc;
      window.opener.document.all(''ag_f_bp_cons'').value  = pfbcons ;
@@ -3219,19 +3225,19 @@ PROCEDURE sp_javascript_contratos_busca
     window.opener.document.all(''ag_cantidad'').value   = pcantidad;
     window.opener.document.all(''ag_unidad'').value     = unm_desc;
     window.opener.document.all(''ag_unidad_codigo'').value = unm_codigo;
-    
+
       //  wo.RtnItem(pitem,pdesc,pfbcons,pubigeo,pmonto,pcantidad,unm_desc,unm_codigo)
        wo.callListadoItemPaquete(pitem,pmonto);
        window.close();
-      
+
     }
-         
+
      function retornaItemsCO_v3(pitem,pdesc,pfbcons,pubigeo,pmonto,pcantidad,psc_codigo,psc_des,pmc_codigo,pmc_des, unm_desc,unm_codigo)
     {
      var wo = window.opener
     //    wo.RtnItem_v3(pitem,pdesc,pfbcons,pubigeo,pmonto,pcantidad,unm_desc,unm_codigo,psc_codigo,psc_des,pmc_codigo,pmc_des);
-    
-    
+
+
        window.opener.document.all(''ag_proc_item'').value   = pitem;
       window.opener.document.all(''ag_descripcion'').value = pdesc;
      window.opener.document.all(''ag_f_bp_cons'').value  = pfbcons ;
@@ -3244,16 +3250,16 @@ PROCEDURE sp_javascript_contratos_busca
     window.opener.document.all(''ag_mod_des'').value = pmc_des;
         window.opener.document.all(''ag_sis_cont'').value = psc_codigo;
     window.opener.document.all(''ag_mod_cont'').value = pmc_codigo;
-   
-   
+
+
        wo.callListadoItemPaquete(pitem,pmonto);
         window.close();
     }
 
     function retornaItemsCO2(pitem, pdesc,pfbp,pubigeo,pmonto,pcantidad,punidaddesc,punidad)
     {
-    
-   
+
+
         var wo = window.opener
         window.opener.document.all(''ag_proc_item'').value     = pitem;
         window.opener.document.all(''ag_descripcion'').value   = pdesc;
@@ -3263,16 +3269,16 @@ PROCEDURE sp_javascript_contratos_busca
         window.opener.document.all(''ag_unidad'').value        = punidaddesc;
         window.opener.document.all(''ag_cantidad'').value      = pcantidad;
         window.opener.document.all(''ag_unidad_codigo'').value = punidad;
-              
+
         wo.callListadoItemPaquete(pitem,pmonto);
-        
-  
+
+
         window.close();
     }
-    
+
      function retornaItemsCO2_v3(pitem, pdesc,pfbp,pubigeo,pmonto,pcantidad,punidaddesc,punidad, psc_codigo, psc_desc, pmc_codigo, pmc_desc)
     {
-    
+
         var wo = window.opener
         window.opener.document.all(''ag_proc_item'').value     = pitem;
         window.opener.document.all(''ag_descripcion'').value   = pdesc;
@@ -3286,9 +3292,9 @@ PROCEDURE sp_javascript_contratos_busca
           window.opener.document.all(''ag_mod_cont'').value = pmc_codigo;
            window.opener.document.all(''ag_sis_des'').value = psc_desc;
             window.opener.document.all(''ag_mod_des'').value = pmc_desc;
-        
+
         wo.callListadoItemPaquete(pitem,pmonto);
-        
+
         window.close();
     }
 '
@@ -4661,13 +4667,13 @@ begin
            -- ls_detalle:=ls_detalle||'<a target="_blank"  href="DownloadFileServlet?fileName='||i_docs.archivo||'"><img src="'||i_docs.icon_tipo_file||'" width="30" height="30" border="0"><br>'||to_char(i_docs.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b><br>Tamaño <br>'||to_char(i_docs.tamano,'999,999,999')||' Kb.<br></b>';
            -- MMAUTINO: VISUALIZACION DE DOCUMENTOS DE CONTRATOS QUE NO TIENEN N_COD_CONTRATO
            -- ls_detalle:=ls_detalle||'<a target="_blank" href="'||'http://'||reg_procesos.f_get_conexiones(10)||'/'||i_docs.archivo||'"><img src="'||i_docs.icon_tipo_file||'" width="30" height="30" border="0"><br>'||to_char(i_docs.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b><br>Tamaño <br>'||to_char(i_docs.tamano,'999,999,999')||' Kb.<br></b>';
-        
+
            --INICIO
            ls_detalle:=ls_detalle||'
            <a target="_blank" href="'||'http://'||reg_procesos.f_get_conexiones(10)||'/'||replace(i_docs.archivo,' ','%20')||'">
            <img src="'||i_docs.icon_tipo_file||'" width="30" height="30" border="0"><br>'||to_char(i_docs.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b><br>Tamaño <br>'||to_char(i_docs.tamano,'999,999,999')||' Kb.<br></b>';
            --FIN
-           
+
      end loop;
 
      usp_print('<tr>');
@@ -4788,7 +4794,7 @@ IS
       ln_cant_doc                    NUMBER;
       ln_moneda_conv                 NUMBER;
       valida_arbitro                   NUMBER; 
-      
+
       ld_f_registro                  date; -- Jcerda req MEF 19/10/2015  
 
 --cambios arbitro nueva ley
@@ -4941,7 +4947,7 @@ end loop;
 
           select   count(*) INTO valida_arbitro from reg_procesos.contrato_arbitraje where ruc_presidente = trim(session__userid)
           and n_cod_contrato = ln_n_cod_contrato_pad and ind_ultimo = 1;
- 
+
 
           if ((n_cvalidauser = 0) or (valida_arbitro > 0 and n_cvalidauser > 0)) then 
 
@@ -5039,7 +5045,7 @@ end loop;
                nvl(replace('bootstrap/'||tipo_archivo.icon_tipo_file, 'jpg', 'png'),99) icon_tipo_file,
                (reg_procesos.convocatoria_doc.tamano_bytes) tamano,
                reg_procesos.convocatoria_doc.fec_upload fecha_creacion  
-                
+
                 INTO lv_doc_url, lv_icon_tipo_file, lv_tamano, lv_fecha_creacion
                 FROM
                     reg_procesos.tipo_documento LEFT OUTER
@@ -5052,23 +5058,27 @@ end loop;
                 WHERE reg_procesos.tipo_documento.cod_tipo_doc = 700
                 ORDER BY reg_procesos.tipo_documento.cod_tipo_doc;
 
-               
+
                if(ln_n_cod_contrato IS NOT NULL ) then
-                               
-                  usp_print ('
-                <a target="_blank" href="'||url_azure_app||replace(lv_doc_url,' ','%20')||'">
-                <img src="'||lv_icon_tipo_file||'" width="30" height="30" border="0">
+                
+                if (INSTR(lv_doc_url, 'particion1') > 0) then
+                    usp_print ('<a target="_blank" href="'||url_azure_app1||replace(lv_doc_url,' ','%20')||'">');
+                else
+                    usp_print ('<a target="_blank" href="'||url_azure_app||replace(lv_doc_url,' ','%20')||'">');
+                end if;
+
+                usp_print ('<img src="'||lv_icon_tipo_file||'" width="30" height="30" border="0">
                 <br>'||to_char(lv_fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(lv_tamano,'999,999,999')||' Kb.<br></b><br>');
-                
+
                   else
-                  
+
                  usp_print ('
                 <a target="_blank" href="http://'||reg_procesos.f_get_conexiones(10)||replace(lv_doc_url,' ','%20')||'">
                 <img src="'||lv_icon_tipo_file||'" width="30" height="30" border="0">
                 <br>'||to_char(lv_fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(lv_tamano,'999,999,999')||' Kb.<br></b><br>');
-                
+
                   end if;
 
             END IF;
@@ -5078,18 +5088,25 @@ end loop;
             <td align="center" valign="top">');
 
              for xx in cdocs2(ln_nconvoca,ln_n_cod_contrato)loop
-             
+
              if(lv_doc_url IS NOT NULL ) then
-             usp_print ('
-                <a target="_blank" href="'||url_azure_app||replace(xx.archivo,' ','%20')||'">
-                <img src="'||xx.icon_tipo_file||'" width="30" height="30" border="0">
+                if (INSTR(xx.archivo, 'particion1') > 0) then
+                   usp_print('<a target="_blank" href="'||url_azure_app1||replace(xx.archivo,' ','%20')||'">');
+                else
+                    usp_print('<a target="_blank" href="'||url_azure_app||replace(xx.archivo,' ','%20')||'">');
+                end if;
+
+                 usp_print('<img src="'||xx.icon_tipo_file||'" width="30" height="30" border="0">
                 <br>'||to_char(xx.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(xx.tamano,'999,999,999')||' Kb.<br></b><br>');
               else
-               usp_print ('
-                <!-- <a target="_blank" href="http://'||reg_procesos.f_get_conexiones(10)||replace(xx.archivo,' ','%20')||'">-->
-                <a target="_blank" href="'||url_azure_app||replace(xx.archivo,' ','%20')||'">
-                <img src="'||xx.icon_tipo_file||'" width="30" height="30" border="0">
+              if (INSTR(xx.archivo, 'particion1') > 0) then
+                   usp_print ('<a target="_blank" href="'||url_azure_app1||replace(xx.archivo,' ','%20')||'">');
+                else
+                   usp_print ('<a target="_blank" href="'||url_azure_app||replace(xx.archivo,' ','%20')||'">');
+                end if;
+               
+                usp_print (' <img src="'||xx.icon_tipo_file||'" width="30" height="30" border="0">
                 <br>'||to_char(xx.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(xx.tamano,'999,999,999')||' Kb.<br></b><br>');
               end if; 
@@ -5097,7 +5114,7 @@ end loop;
 
             usp_print('</td>
         </tr>');
-        
+
              END IF ;
 
         END LOOP;
@@ -5783,9 +5800,9 @@ IF lv_totalregistros > 0 THEN
                                 ,unm_desc='''||xrow.unm_desc||'''
                                 ,unm_codigo='|| xrow.unm_codigo,'retornaItemsCO',xrow.proc_item)||
                          '</td>');
-              
+
               usp_print('<td align="center" class="recuadro">'|| xrow.item_paquete||'</td>');
-              
+
               usp_print('<td align="right"  class="recuadro"><font size=1>'||
                          makea2('pitem='|| xrow.proc_item||'
                                 ,pdesc='''|| xrow.descripcion||'''
