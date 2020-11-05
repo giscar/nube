@@ -22,7 +22,7 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_MAKE_CONTRATOS"
   gpk_directorio_resumen_cont     varchar2(50):= 'mon\docs\contratos';
   gpk_directorio_resolucion       varchar2(50):= 'mon\docs\contratos';
   gpk_directorio_nulidad          varchar2(50):= 'mon\docs\contratos';  
-  
+
     --consultoria nube migracion
   url_azure_app    varchar2(50):= 'https://zonasegura2.seace.gob.pe/documentos/';
   url_azure_app1    varchar2(50):= 'https://zonasegura2.seace.gob.pe/';
@@ -85,7 +85,7 @@ procedure uspIrOperacionDoView(
 /******************************************************************************/
 
 
- 
+
 /*
   procedure uspNewContratosItemsDoEdit(
     ag_fecSusc   varchar2 default null,
@@ -103,7 +103,7 @@ procedure uspIrOperacionDoView(
 / Gerardo Millones                          Version Inicial
 /******************************************************************************/
   procedure uspListTransferenciasDoView(ag_ncod_contrato varchar2);
-  
+
   PROCEDURE usplistcontratosdoview_v3 (
     ag_n_convoca              VARCHAR2 DEFAULT NULL,
     an_codconsucode           VARCHAR2 DEFAULT NULL,
@@ -242,7 +242,7 @@ procedure uspIrOperacionDoView(
       ag_penalidad_fecha      OUT      VARCHAR2,
       ag_penalidad_causal     OUT      VARCHAR2
    );
- 
+
  PROCEDURE usplistsearchitems (
       ag_cod_contrato     NUMBER default null,
       ag_n_convoca        NUMBER default null,
@@ -339,7 +339,7 @@ procedure uspIrOperacionDoView(
    session__AG_N_CONVOCA            VARCHAR2 DEFAULT NULL,
    ag_id_operacion                  VARCHAR2
   );
-  
+
   PROCEDURE uspmancontratosdoedit (
       session__userid            VARCHAR2 DEFAULT NULL,
       session__N_CONVOCA      VARCHAR2 DEFAULT NULL,
@@ -366,7 +366,7 @@ procedure uspIrOperacionDoView(
       session__eue_codigo        VARCHAR2,
       ag_trama_calendario        VARCHAR2 
    );
-   
+
    PROCEDURE uspprocesarupdatecontrato (
       session__cod_contrato           VARCHAR2,
       session__n_convoca              VARCHAR2,
@@ -420,7 +420,7 @@ procedure uspIrOperacionDoView(
       ag_trama_calendario             varchar2 ,
       ag_trama_items_codpresup        VARCHAR2 
    );
-   
+
  PROCEDURE uspprocesarinsertcontrato (
     session__AG_N_CONVOCA           VARCHAR2 DEFAULT NULL,
     session__USERID                 VARCHAR2 DEFAULT NULL,
@@ -470,7 +470,7 @@ procedure uspIrOperacionDoView(
     ag_trama_calendario             varchar2,
     ag_trama_items_codpresup        varchar2
  );
- 
+
   PROCEDURE uspverconvocatoriadoview (
       ag_n_convoca            IN       VARCHAR2,
       ag_codconsucode         OUT      VARCHAR2,
@@ -558,7 +558,7 @@ PROCEDURE uspBuscarCodPresupuestal(
           ag_proc_item                varchar2, 
           ag_tipo_operacion           varchar2,
           ag_codconsucode             VARCHAR2 );
-    
+
 PROCEDURE usp_registra_codpresup(
           ag_trama_items_codpresup varchar2, 
           ag_ncodcontrato          number, 
@@ -571,16 +571,17 @@ FUNCTION f_retorna_combo(
   ag_codigo       varchar2, 
   ag_libre        varchar2 default null,
   ag_atributos    varchar2 default null) RETURN varchar2;
-  
+
   procedure usp_documento(
     session__filesingedhttp   VARCHAR2 DEFAULT NULL,
     vi_n_convoca number );
 
 END;
+
 /
 
 
-CREATE OR REPLACE PACKAGE BODY "PKU_GESTOR_CONT_MAKE_CONTRATOS"
+CREATE OR REPLACE PACKAGE BODY PKU_GESTOR_CONT_MAKE_CONTRATOS
 IS
 /*******************************************************************************
 / Procedimiento : uspCalculaCostosFinal
@@ -1966,13 +1967,13 @@ IS
        order by cd.fec_upload desc ;
 
     cursor c_doc_seacev3(p_contrato number) is
-        select a.n_id_documento,
+        select n_id_documento,
        'bootstrap/images/icon_pdf.png' icon_tipo_file,
-       a.n_tamarc tamano,
-       a.d_feccre fecha_creacion
-       from con.det_con_documento@AIXSEACE.SEACE.GOB.PE a
-       where a.n_id_contrato = p_contrato
-       and a.n_tipdoc = 2;  
+       n_tamarc tamano,
+       d_feccre fecha_creacion
+       from con.det_con_documento@AIXSEACE
+       where n_id_contrato = p_contrato
+       and n_tipdoc = 2;  
 
       -- Datos de la pantalla
       ln_nconvoca                    NUMBER;
@@ -2028,7 +2029,7 @@ IS
       lc_idprocsel                   varchar2(25);--modificar con la fecha de pase 
       ld_fec_reqMEF                  date := to_date('20112015','ddmmyyyy'); -- Jcerda req MEF 19/10/2015  
       ld_f_registro                  date; -- Jcerda req MEF 19/10/2015  
-      
+
       ln_valida_origen      number;
 --cambios arbitro nueva ley
     cursor cValidaUser is
@@ -2338,7 +2339,7 @@ usp_print('<div style="background-color:#F6FF8A;">Si requiere registrar un nuevo
                 else
                     usp_print ('<a target="_blank" href="'||url_azure_app||xx.archivo||'">');
                 end if;
-                
+
                 usp_print ('<img src="'||xx.icon_tipo_file||'" width="30" height="30" border="0">
                 <br>'||to_char(xx.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(xx.tamano,'999,999,999')||' Kb.<br></b><br>');
@@ -2351,7 +2352,7 @@ usp_print('<div style="background-color:#F6FF8A;">Si requiere registrar un nuevo
                 <br>'||to_char(xx.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(xx.tamano,'999,999,999')||' Kb.<br></b><br>');
             end loop;
-            
+
            end if;  
 
             usp_print('</td>
@@ -5080,7 +5081,7 @@ end loop;
 
 
                if(ln_n_cod_contrato IS NOT NULL ) then
-                
+
                 if (INSTR(lv_doc_url, 'particion1') > 0) then
                     usp_print ('<a target="_blank" href="'||url_azure_app1||replace(lv_doc_url,' ','%20')||'">');
                 else
@@ -5125,7 +5126,7 @@ end loop;
                 else
                    usp_print ('<a target="_blank" href="'||url_azure_app||replace(xx.archivo,' ','%20')||'">');
                 end if;
-               
+
                 usp_print (' <img src="'||xx.icon_tipo_file||'" width="30" height="30" border="0">
                 <br>'||to_char(xx.fecha_creacion,'dd/mm/yyyy hh24:mi')||'</a><b>
                 <br>Tamaño '||to_char(xx.tamano,'999,999,999')||' Kb.<br></b><br>');
@@ -8619,4 +8620,5 @@ If (control_estado = 0) then
   END;
 
 END;
+
 /
