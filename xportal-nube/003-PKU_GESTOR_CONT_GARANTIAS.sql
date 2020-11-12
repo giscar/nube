@@ -893,7 +893,7 @@ Begin
                   reg_procesos.f_get_min_n_convoca(ag_n_convoca),
                   2450,
                   lv_codtipofile,
-                  WriteFileDirectoryDynamic ||pfiletoupload_file1 ,
+                  WriteFileDirectoryDynamic||'\'||pfiletoupload_file1 ,
                   pfiletoupload_file1,
                   sysdate,
                   session__userid,
